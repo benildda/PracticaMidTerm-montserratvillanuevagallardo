@@ -18,6 +18,13 @@ document.querySelector('#app').innerHTML = `
   <button type="submit">Crear perfil</button>
 </form>
 
+<!-- Pantalla del juego -->
+<section id="game-screen" hidden>
+  <h2>Partida PokeMemory</h2>
+  <p id="player-name"></p>
+  <img id="player-pokemon-image" alt="Pokémon favorito">
+</section>
+
 `
 
 // 2. Validar el nombre de usuario y el Pokémon seleccionado
@@ -44,6 +51,14 @@ formulario.addEventListener('submit', function (event) {
   }
 
   mensajePokemonError.textContent = '';
+  // 12. Guardar el perfil del jugador en sessionStorage
+  const perfilJugador = {
+    nombre: nombre,
+    pokemon: pokemonSeleccionado
+  };
+
+  sessionStorage.setItem('perfilJugador', JSON.stringify(perfilJugador));
+  mostrarPantallaJuego(perfilJugador);
 });
 
 // 3. Preparar las variables
@@ -66,6 +81,11 @@ const contenedorSugerencias = document.querySelector('#pokemon-suggestions');
 
 // 6. Filtrar los Pokémon según el texto introducido
 buscadorPokemon.addEventListener('input', function (event) {
+
+  pokemonSeleccionado = null;
+
+  const imagenPokemon = document.querySelector('#pokemon-image');
+  imagenPokemon.hidden = true;
 
   const busqueda = event.target.value.toLowerCase().trim();
   contenedorSugerencias.textContent = '';
@@ -121,3 +141,32 @@ buscadorPokemon.addEventListener('input', function (event) {
   });
 
 });
+
+// 13. Recuperar el perfil guardado en sessionStorage
+const perfilGuardado = sessionStorage.getItem('perfilJugador');
+
+if (perfilGuardado !== null) {
+  const perfil = JSON.parse(perfilGuardado);
+
+  console.log('Perfil recuperado:', perfil);
+
+  // 14. Restaurar los datos del perfil en el formulario
+  document.querySelector('#username').value = perfil.nombre;
+
+  buscadorPokemon.value = perfil.pokemon.nombre;
+
+  const imagenPokemon = document.querySelector('#pokemon-image');
+  imagenPokemon.src = perfil.pokemon.imagen;
+  imagenPokemon.hidden = false;
+
+  pokemonSeleccionado = perfil.pokemon;
+}
+
+// 15. Mostrar la pantalla del juego
+function mostrarPantallaJuego(perfil) {
+  document.querySelector('#profile-form').hidden = true;
+  document.querySelector('#game-screen').hidden = false;
+
+  document.querySelector('#player-name').textContent = perfil.nombre;
+  document.querySelector('#player-pokemon-image').src = perfil.pokemon.imagen;
+}
