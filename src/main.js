@@ -23,6 +23,17 @@ document.querySelector('#app').innerHTML = `
   <h2>Partida PokeMemory</h2>
   <p id="player-name"></p>
   <img id="player-pokemon-image" alt="Pokémon favorito">
+  <label for="card-count">Número de cartas</label>
+<input
+  type="number"
+  id="card-count"
+  min="2"
+  step="2"
+  value="4"
+>
+<button id="start-game" type="button">Empezar partida</button>
+<p id="card-error"></p>
+  <button id="logout-button" type="button">Cerrar sesión</button>
 </section>
 
 `
@@ -160,6 +171,7 @@ if (perfilGuardado !== null) {
   imagenPokemon.hidden = false;
 
   pokemonSeleccionado = perfil.pokemon;
+  mostrarPantallaJuego(perfil);
 }
 
 // 15. Mostrar la pantalla del juego
@@ -170,3 +182,58 @@ function mostrarPantallaJuego(perfil) {
   document.querySelector('#player-name').textContent = perfil.nombre;
   document.querySelector('#player-pokemon-image').src = perfil.pokemon.imagen;
 }
+
+// 16. Cerrar la sesión del jugador
+const botonCerrarSesion = document.querySelector('#logout-button');
+
+botonCerrarSesion.addEventListener('click', function () {
+  sessionStorage.removeItem('perfilJugador');
+  location.reload();
+});
+
+// 17. Validar el número de cartas
+const botonEmpezar = document.querySelector('#start-game');
+
+botonEmpezar.addEventListener('click', function () {
+  const inputCartas = document.querySelector('#card-count');
+  const numeroCartas = Number(inputCartas.value);
+
+  console.log('Número de cartas:', numeroCartas);
+  const mensajeError = document.querySelector('#card-error');
+
+  if (
+    !Number.isInteger(numeroCartas) ||
+    numeroCartas < 2 ||
+    numeroCartas % 2 !== 0
+  ) {
+    mensajeError.textContent = 'Introduce un número entero, positivo y par de cartas';
+    return;
+  }
+
+  mensajeError.textContent = '';
+  console.log('Número válido:', numeroCartas);
+
+  // 18. Calcular el número de parejas
+  const numeroParejas = numeroCartas / 2;
+
+  console.log('Parejas necesarias:', numeroParejas);
+
+  // 19. Elegir Pokémon aleatorios sin repetir
+  const pokemonElegidos = [];
+
+  while (pokemonElegidos.length < numeroParejas) {
+    const indiceAleatorio = Math.floor(Math.random() * listaPokemon.length);
+    const pokemonAleatorio = listaPokemon[indiceAleatorio];
+
+    if (!pokemonElegidos.includes(pokemonAleatorio)) {
+      pokemonElegidos.push(pokemonAleatorio);
+    }
+  }
+
+  console.log('Pokémon elegidos:', pokemonElegidos);
+
+  // 20. Crear las parejas de Pokémon
+  const cartas = [...pokemonElegidos, ...pokemonElegidos];
+
+  console.log('Cartas de la partida:', cartas);
+});
