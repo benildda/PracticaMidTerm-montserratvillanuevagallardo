@@ -33,6 +33,7 @@ document.querySelector('#app').innerHTML = `
 >
 <button id="start-game" type="button">Empezar partida</button>
 <p id="card-error"></p>
+<div id='game-board'></div>
   <button id="logout-button" type="button">Cerrar sesión</button>
 </section>
 
@@ -236,4 +237,16 @@ botonEmpezar.addEventListener('click', function () {
   const cartas = [...pokemonElegidos, ...pokemonElegidos];
 
   console.log('Cartas de la partida:', cartas);
+
+
+// 21. Mezclar las cartas
+const cartasMezcladas = [];
+
+while (cartas.length > 0) {
+  const indiceAleatorio = Math.floor(Math.random() * cartas.length);
+  const cartaExtraida = cartas.splice(indiceAleatorio, 1);
+  cartasMezcladas.push(cartaExtraida[0]);
+}
+
+console.log('Cartas mezcladas:', cartasMezcladas);
 });
